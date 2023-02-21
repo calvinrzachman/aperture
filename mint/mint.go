@@ -101,6 +101,7 @@ func (m *Mint) MintLSAT(ctx context.Context,
 	// payment request to present the requester of the LSAT with.
 	paymentRequest, paymentHash, err := m.cfg.Challenger.NewChallenge(price)
 	if err != nil {
+		log.Infof("Error minting LSAT: %v", err)
 		return nil, "", err
 	}
 
@@ -110,17 +111,20 @@ func (m *Mint) MintLSAT(ctx context.Context,
 	// mapped to a unique secret.
 	id, err := createUniqueIdentifier(paymentHash)
 	if err != nil {
+		log.Infof("Error creating unique ID: %v", err)
 		return nil, "", err
 	}
 	idHash := sha256.Sum256(id)
 	secret, err := m.cfg.Secrets.NewSecret(ctx, idHash)
 	if err != nil {
+		log.Infof("Error creating new secret: %v", err)
 		return nil, "", err
 	}
 	mac, err := macaroon.New(
 		secret[:], id, "lsat", macaroon.LatestVersion,
 	)
 	if err != nil {
+		log.Infof("Error minting macaroon: %v", err)
 		// Attempt to revoke the secret to save space.
 		_ = m.cfg.Secrets.RevokeSecret(ctx, idHash)
 		return nil, "", err
@@ -133,12 +137,14 @@ func (m *Mint) MintLSAT(ctx context.Context,
 		var err error
 		caveats, err = m.caveatsForServices(ctx, services...)
 		if err != nil {
+			log.Infof("Error adding caveats to macaroon: %v", err)
 			// Attempt to revoke the secret to save space.
 			_ = m.cfg.Secrets.RevokeSecret(ctx, idHash)
 			return nil, "", err
 		}
 	}
 	if err := lsat.AddFirstPartyCaveats(mac, caveats...); err != nil {
+		log.Infof("Error adding first party caveats to macaroon: %v", err)
 		// Attempt to revoke the secret to save space.
 		_ = m.cfg.Secrets.RevokeSecret(ctx, idHash)
 		return nil, "", err

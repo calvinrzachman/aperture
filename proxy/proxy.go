@@ -401,10 +401,12 @@ func (p *Proxy) handlePaymentRequired(w http.ResponseWriter, r *http.Request,
 	serviceName string, servicePrice int64) {
 
 	addCorsHeaders(r.Header)
-
+	log.Info("Finished adding CORS header")
+	// We make it here:
 	header, err := p.authenticator.FreshChallengeHeader(r, serviceName, servicePrice)
 	if err != nil {
 		log.Errorf("Error creating new challenge header: %v", err)
+		log.Infof("Error creating new challenge header: %v", err)
 		sendDirectResponse(
 			w, r, http.StatusInternalServerError,
 			"challenge failure",

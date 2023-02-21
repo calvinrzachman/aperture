@@ -87,11 +87,13 @@ func (l *LsatAuthenticator) FreshChallengeHeader(r *http.Request,
 		context.Background(), service,
 	)
 	if err != nil {
+		log.Infof("Error minting LSAT: %v", err)
 		log.Errorf("Error minting LSAT: %v", err)
 		return nil, err
 	}
 	macBytes, err := mac.MarshalBinary()
 	if err != nil {
+		log.Infof("Error serializing LSAT: %v", err)
 		log.Errorf("Error serializing LSAT: %v", err)
 	}
 

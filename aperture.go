@@ -185,6 +185,9 @@ func (a *Aperture) Start(errChan chan error) error {
 			"exporter: %v", err)
 	}
 
+	fmt.Printf("Attempting to reach etcd (%s) client with user: %s, pass: %s\n",
+		a.cfg.Etcd.Host, a.cfg.Etcd.User, a.cfg.Etcd.Password)
+
 	// Initialize our etcd client.
 	a.etcdClient, err = clientv3.New(clientv3.Config{
 		Endpoints:   []string{a.cfg.Etcd.Host},
