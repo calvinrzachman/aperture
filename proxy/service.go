@@ -210,10 +210,10 @@ func prepareServices(services []*Service) error {
 		// a price of zero satoshis, is set the then default price of 1
 		// satoshi is to be used.
 		switch {
-		case service.Price == 0:
-			log.Debugf("Using default LSAT price of %v satoshis for "+
-				"service %s.", defaultServicePrice, service.Name)
-			service.Price = defaultServicePrice
+		// case service.Price == 0:
+		// 	log.Debugf("Using default LSAT price of %v satoshis for "+
+		// 		"service %s.", defaultServicePrice, service.Name)
+		// 	service.Price = defaultServicePrice
 		case service.Price < 0:
 			return fmt.Errorf("negative price set for "+
 				"service %s", service.Name)
